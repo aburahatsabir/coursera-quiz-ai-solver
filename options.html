@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Quiz AI Solver — Settings</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a14;
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .page {
+            max-width: 560px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: #0f0f1a;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 16px;
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .field select,
+        .field input[type="text"] {
+            width: 100%;
+            background: #0a0a14;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .field select:focus,
+        .field input:focus {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .row-label {
+            font-size: 13px;
+        }
+
+        .row-desc {
+            font-size: 11px;
+            color: #4b5563;
+            margin-top: 2px;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+            cursor: pointer;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: #1e1e35;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 22px;
+            transition: all 0.25s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            top: 2px;
+            background: #4b5563;
+            border-radius: 50%;
+            transition: all 0.25s;
+        }
+
+        .toggle input:checked+.toggle-slider {
+            background: #312e81;
+            border-color: #6366f1;
+        }
+
+        .toggle input:checked+.toggle-slider::before {
+            transform: translateX(18px);
+            background: #818cf8;
+        }
+
+        .btn-save-all {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-save-all:hover {
+            background: linear-gradient(135deg, #7c3aed, #6366f1);
+        }
+
+        .saved-msg {
+            text-align: center;
+            color: #34d399;
+            font-size: 13px;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .saved-msg.show {
+            opacity: 1;
+        }
+
+        .kbd {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            color: #818cf8;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <h1>🧠 Quiz AI Solver Settings</h1>
+        <p class="subtitle">Customize how the AI assistant behaves on Coursera quiz pages.</p>
+
+        <!-- Model Settings -->
+        <div class="card">
+            <div class="card-title">AI Model</div>
+            <div class="field">
+                <label>Gemini Model</label>
+                <select id="opt-model">
+                    <option value="gemini-2.0-flash">gemini-2.0-flash (Default — Free, Fastest)</option>
+                    <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite (Lightest, most free)</option>
+                    <option value="gemini-1.5-flash-latest">gemini-1.5-flash-latest (Stable, free)</option>
+                    <option value="gemini-1.5-pro-latest">gemini-1.5-pro-latest (Most accurate)</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Response Language</label>
+                <select id="opt-language">
+                    <option value="English">English</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="German">German</option>
+                    <option value="Portuguese">Portuguese</option>
+                    <option value="Chinese">Chinese</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Arabic">Arabic</option>
+                    <option value="Bengali">Bengali</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Behavior Settings -->
+        <div class="card">
+            <div class="card-title">Behavior</div>
+            <div class="row">
+                <div>
+                    <div class="row-label">Show Confidence Score</div>
+                    <div class="row-desc">Display AI's confidence percentage next to answers</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="opt-show-confidence" checked />
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="row">
+                <div>
+                    <div class="row-label">Show Reasoning</div>
+                    <div class="row-desc">Show brief explanation for each answer</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="opt-show-reasoning" checked />
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="row">
+                <div>
+                    <div class="row-label">Highlight Correct Options</div>
+                    <div class="row-desc">Visually highlight the suggested answer option</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="opt-highlight" checked />
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="row">
+                <div>
+                    <div class="row-label">Auto-Solve on Page Load</div>
+                    <div class="row-desc">Automatically solve questions when quiz page loads</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="opt-auto-solve" />
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- About -->
+        <div class="card">
+            <div class="card-title">About</div>
+            <div class="row">
+                <div class="row-label">Version</div>
+                <span style="color:#64748b;font-size:12px;">1.0.0</span>
+            </div>
+            <div class="row">
+                <div class="row-label">API Provider</div>
+                <span style="color:#64748b;font-size:12px;">Google Gemini (Free tier)</span>
+            </div>
+            <div class="row" style="border-bottom:none;">
+                <div class="row-label">Keyboard shortcut</div>
+                <span><kbd class="kbd">Click toolbar button</kbd></span>
+            </div>
+        </div>
+
+        <button class="btn-save-all" id="save-all-btn">Save Settings</button>
+        <div class="saved-msg" id="saved-msg">✓ Settings saved!</div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+
+</html>

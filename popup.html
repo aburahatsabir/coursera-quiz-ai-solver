@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz AI — Coursera Solver</title>
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- ── Header ──────────────────────────────────────────── -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Quiz AI Solver</span>
+          <span class="logo-sub"><span class="status-dot active" id="status-dot"></span> <span
+              id="status-text">Ready</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Actions ──────────────────────────────────────────── -->
+    <div class="section">
+      <div class="label"><span>Actions (Runs on Active Tab)</span></div>
+
+      <!-- Primary: Full pipeline -->
+      <button class="btn-auto" id="auto-solve-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+        Auto-Solve All My Assignments
+      </button>
+
+      <!-- Secondary: Just this quiz -->
+      <button class="btn-primary" id="solve-all-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        Answer This Quiz Only
+      </button>
+    </div>
+
+    <!-- ── Feature Pills (emoji — never overflow) ─────────── -->
+    <div class="capability-strip">
+      <div class="cap-item">
+        <span class="cap-dot">⚡</span>
+        <span>Instant AI</span>
+      </div>
+      <div class="cap-divider"></div>
+      <div class="cap-item">
+        <span class="cap-dot">🔓</span>
+        <span>Free</span>
+      </div>
+      <div class="cap-divider"></div>
+      <div class="cap-item">
+        <span class="cap-dot">✓</span>
+        <span>Auto-submits</span>
+      </div>
+    </div>
+
+    <!-- ── Footer ───────────────────────────────────────────── -->
+    <div class="footer">
+      <div class="footer-author">
+        <span>Made by</span>
+        <a href="https://aburahatsabir.vercel.app/" target="_blank" class="author-link">Abu Rahat Sabir</a>
+      </div>
+      <span class="footer-version">v6.0 WEB-UI</span>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+
+</html>
