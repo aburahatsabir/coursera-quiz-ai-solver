@@ -47,20 +47,62 @@ We completely bypassed this artificially costly gateway. This extension actively
 
 ---
 
-## 📥 Installation Guide (30-Second Setup)
+## ⚙️ Initial Setup Requirements
+
+Before you can use the Coursera Quiz AI Solver, you must ensure your environment is prepared. Because this extension uses a live bridging architecture instead of an API, **you must have a supported AI tab open.**
+
+1. **Google Chrome or Microsoft Edge:** The extension must be installed on a Chromium-based browser.
+2. **Active ChatGPT Account:** You need a free or Plus account at [chatgpt.com](https://chatgpt.com).
+3. **No Interfering Extensions:** Please disable any other Coursera-specific extensions (like old out-of-date solvers or ad-blockers that might block DOM injection) while running this tool.
+
+---
+
+## 📥 Detailed Installation Guide
 
 You do not need to be a developer to install this. Simply load the unpacked extension directly into Google Chrome.
 
 1. **Download the Repository:** Click the green `Code` button at the top right of this page and select **Download ZIP**, then extract the folder to your desktop.
-2. **Open Extensions:** In your browser, navigate to `chrome://extensions/` (or edge://extensions/).
-3. **Enable Developer Mode:** Toggle the **Developer mode** switch in the top right corner.
-4. **Load the Extension:** Click **Load unpacked** and select the extracted `coursera-quiz-solver` folder.
-5. **Open ChatGPT:** Open a new tab, navigate to [ChatGPT](https://chatgpt.com/), and make sure you are logged in.
-6. **Deploy:** Go to your Coursera Assignments page, click the extension puzzle piece icon, and select "Solve All My Quizzes".
+2. **Open Extensions Page:** In Chrome, type `chrome://extensions/` into your URL bar and hit Enter.
+3. **Enable Developer Mode:** Toggle the **Developer mode** switch in the top right corner of the extensions page.
+4. **Load the Extension:** Click the **Load unpacked** button at the top left and select the extracted `coursera-quiz-solver` folder from your desktop.
+5. **Pin the Extension:** Click the puzzle piece icon in the top right of your browser and "pin" the Coursera Quiz AI Solver so it's always visible.
 
-<p align="center">
-  <i>(A small "CQS Toolbar" will appear at the bottom right corner of your screen indicating the active AI pipeline state).</i>
-</p>
+---
+
+## 🚀 How to Use the Solver (Step-by-Step)
+
+The extension is designed to be a "1-click" solution, but you must follow this exact order of operations:
+
+1. **Open ChatGPT:** Open a new tab and navigate to [chatgpt.com](https://chatgpt.com/). Ensure you are fully logged in and can see the chat interface. Leave this tab open.
+2. **Navigate to Coursera:** In a separate tab, go to your Coursera course and open either the **Assignments List Page** or a specific **Quiz Page**.
+3. **Activate the Tool:** Click the Coursera Quiz AI Solver extension icon in your browser toolbar.
+4. **Click "Solve All My Quizzes":** 
+   * A small status toolbar will appear at the bottom right corner of your screen indicating it is active.
+   * The extension will automatically navigate to your first incomplete quiz, read the questions, and send them to your open ChatGPT tab.
+   * *Do not close the ChatGPT tab while it is running!*
+5. **Sit Back:** The AI will generate the answers, send them back to Coursera, auto-fill the checkboxes, accept the Honor Code, and submit the quiz. It will then automatically proceed to the next module.
+
+---
+
+## 🔧 Troubleshooting & Common Problems
+
+If the solver gets stuck or isn't working as expected, refer to this troubleshooting guide:
+
+**Problem 1: The extension says "ChatGPT tab not found!"**
+* **Cause:** The script cannot detect `https://chatgpt.com/` in any of your active tabs.
+* **Solution:** Make sure you actually have ChatGPT open in a normal tab (not an incognito window, unless you allowed the extension in incognito). Ensure the URL is exactly `https://chatgpt.com`.
+
+**Problem 2: The Coursera page sits there doing nothing, or the bottom-right toolbar says "Waiting for answers..." forever.**
+* **Cause:** ChatGPT might have triggered a Cloudflare CAPTCHA, asked you to verify you are human, or hit a rate limit (too many messages).
+* **Solution:** Switch over to your ChatGPT tab and look at it. If is asking you to click a button or solve a puzzle, do it manually. The extension will automatically resume once ChatGPT outputs the final answer.
+
+**Problem 3: It answers the questions but fails to click the "Submit" or "Start Assignment" button.**
+* **Cause:** Coursera occasionally A/B tests new button designs or changes their React DOM structure depending on your region.
+* **Solution:** Refresh the page and try clicking the button manually. The extension should pick up where it left off on the next page. If it persistently fails to submit, please open an Issue on this GitHub repository so we can update the CSS selectors.
+
+**Problem 4: The answers provided by ChatGPT are incorrect.**
+* **Cause:** While ChatGPT is highly capable, it can occasionally hallucinate answers on highly specialized, niche, or math-heavy subjects.
+* **Solution:** This tool is designed as an assistant. For crucial graded exams, we recommend reviewing the answers it auto-fills before the script clicks the final submit button.
 
 ---
 
