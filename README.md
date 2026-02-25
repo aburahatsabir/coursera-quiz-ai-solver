@@ -47,6 +47,20 @@ We completely bypassed this artificially costly gateway. This extension actively
 
 ---
 
+## 🧠 Dual-Engine Autonomous Routing (ChatGPT & Claude)
+
+The most advanced feature of the **Coursera Quiz AI Solver** is its autonomous, zero-touch switching mechanism between multiple Large Language Models. You do not need to manually flick a switch to pick an AI—the tool dynamically assesses the quiz context and load-balances the request.
+
+### How the "Deep Think" Fallback Works:
+1. **Primary High-Speed Pass (ChatGPT):** By default, the extension routes standard quizzes to your active ChatGPT tab for rapid extraction and parsing.
+2. **Automatic Claude Intercept:** If ChatGPT encounters a rate limit, triggers a Cloudflare CAPTCHA, or fails to parse a highly complex JSON structural question, the script intercepts the failure. Without skipping a beat, it **automatically reroutes the prompt to your active Claude AI tab** as a secondary fallback.
+3. **"Didn't Pass" Redemption Logic:** The extension algorithmically scans the Coursera Grades table. If it detects an assignment officially marked as *"Didn't Pass"* or *"Failed"*, it inherently knows the questions require specialized, high-tier contextual reasoning. It completely bypasses ChatGPT and immediately dispatches the quiz to Claude for a "Deep Think" reassessment.
+
+> [!TIP]
+> **Pro Setup:** For maximum effectiveness, simply keep both `chatgpt.com` and `claude.ai` open in separate background tabs. The extension will automatically act as an intelligent broker between them depending on the difficulty of your assignment.
+
+---
+
 ## ⚙️ Initial Setup Requirements
 
 Before you can use the Coursera Quiz AI Solver, you must ensure your environment is prepared. Because this extension uses a live bridging architecture instead of an API, **you must have a supported AI tab open.**
