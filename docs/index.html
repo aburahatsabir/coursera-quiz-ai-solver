@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coursera Quiz AI Solver 2026 | Free Automated Chrome Extension</title>
+    <meta name="description"
+        content="Working 2026 Coursera Quiz AI Solver. Free Chrome extension to auto-submit answers and bypass quizzes securely with no API key.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        dark: {
+                            bg: '#0B0F19',
+                            surface: '#1A202C',
+                            border: '#2D3748'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0F19;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(26, 32, 44, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-effect {
+            position: absolute;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Background Accents -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="glow-effect w-[800px] h-[800px] -top-[400px] -left-[200px]"></div>
+        <div class="glow-effect w-[600px] h-[600px] top-[20%] -right-[200px] opacity-70"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0 border-dark-border/50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+                        CQ
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white">Coursera<span
+                            class="text-brand-500">Solver</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features"
+                        class="text-gray-300 hover:text-white transition-colors text-sm font-medium">Features</a>
+                    <a href="#how-it-works"
+                        class="text-gray-300 hover:text-white transition-colors text-sm font-medium">How it Works</a>
+                    <a href="#install"
+                        class="glass-panel text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-white/10 transition-all border-brand-500/30 hover:border-brand-500">
+                        Get Started Free
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+
+            <div
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-brand-500/30 mb-8 animate-fade-in">
+                <span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-brand-100">Working 2026 Edition</span>
+            </div>
+
+            <h1
+                class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-8 leading-tight max-w-5xl mx-auto">
+                The Ultimate <br class="hidden md:block" />
+                <span class="gradient-text">Coursera Quiz AI Solver</span>
+            </h1>
+
+            <p class="mt-6 text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-12">
+                Stop paying for broken extensions that require an OpenAI API key. Our transparent bridging technology
+                silently routes quizzes through your active ChatGPT tab for a 100% free, automated solving experience.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <a href="#install"
+                    class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-brand-500 to-blue-600 rounded-xl text-white font-bold text-lg shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Download Extension
+                </a>
+                <a href="https://github.com/aburahatsabir/coursera-quiz-ai-solver" target="_blank"
+                    class="w-full sm:w-auto px-8 py-4 glass-panel rounded-xl text-white font-semibold text-lg hover:bg-white/5 transition-all flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd"
+                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    View Source Source
+                </a>
+            </div>
+
+            <!-- Editor Mockup -->
+            <div class="mt-20 relative max-w-5xl mx-auto group">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-brand-500 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200">
+                </div>
+                <div class="relative glass-panel rounded-2xl border border-dark-border/50 overflow-hidden shadow-2xl">
+                    <div class="flex items-center px-4 py-3 border-b border-dark-border/50 bg-black/40">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        </div>
+                        <div class="ml-4 text-xs font-mono text-gray-500">coursera-quiz-ai-solver — Running Pipeline...
+                        </div>
+                    </div>
+                    <div class="p-6 bg-[#0B0F19]/90 text-left font-mono text-sm leading-relaxed overflow-x-auto">
+                        <p class="text-gray-400">$ initializing injection...</p>
+                        <p class="text-green-400 mt-2">[QuizAI] Found 15 incomplete quizzes.</p>
+                        <p class="text-blue-400 mt-1">[QuizAI] Navigating to Module 1 Quiz...</p>
+                        <p class="text-brand-500 mt-1">[ChatGPT Bridge] Parsing React DOM elements...</p>
+                        <p class="text-purple-400 mt-1">[ChatGPT Bridge] Injecting prompt into active session...</p>
+                        <p class="text-green-400 mt-1">[QuizAI] Answers received. Auto-filling checkboxes...</p>
+                        <p class="text-yellow-400 mt-1">[QuizAI] Bypassing Honor Code React hooks...</p>
+                        <p class="text-brand-500 font-bold mt-2">✓ Quiz Submitted Successfully (100%)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Why 99% of Extensions Fail</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg">Legacy tools rely on rigid web scrapers and paid
+                    APIs. We engineered a robust DOM-injection architecture built for 2026.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-panel p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                    <div
+                        class="w-14 h-14 bg-brand-500/20 rounded-xl flex items-center justify-center mb-6 border border-brand-500/30">
+                        <svg class="w-7 h-7 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">No API Key Required</h3>
+                    <p class="text-gray-400 leading-relaxed">Stop paying per question. The extension silently channels
+                        complex prompts through your physically open ChatGPT browser tab, eliminating subscription costs
+                        entirely.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-panel p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                    <div
+                        class="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 border border-purple-500/30">
+                        <svg class="w-7 h-7 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">React SPA Resistant</h3>
+                    <p class="text-gray-400 leading-relaxed">Coursera frequently obfuscates its DOM. Our script actively
+                        hunts for hidden `data-testid` hooks and dispatches synthetic React mouse events to guarantee
+                        clicks register.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-panel p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                    <div
+                        class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 border border-green-500/30">
+                        <svg class="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Full Auto-Submit Script</h3>
+                    <p class="text-gray-400 leading-relaxed">Don't just get the answers—execute them. The tool
+                        automatically fills checkboxes, checks the Honor Code, clicks submit, and navigates to the next
+                        module in milliseconds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="install" class="py-24 relative overflow-hidden bg-[#0F1423] border-t border-dark-border/30">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Install in 30 Seconds</h2>
+                <p class="text-gray-400 text-lg">No developer experience required. Deploy locally on Chrome or Edge.</p>
+            </div>
+
+            <div class="glass-panel p-8 md:p-12 rounded-2xl border-brand-500/20">
+                <ol
+                    class="space-y-6 text-gray-300 list-decimal list-inside text-lg marker:text-brand-500 marker:font-bold">
+                    <li class="pl-2 border-l-2 border-dark-border ml-2 py-1">Download the ZIP file from our <a
+                            href="https://github.com/aburahatsabir/coursera-quiz-ai-solver/releases"
+                            class="text-brand-400 hover:text-brand-300 underline underline-offset-4">GitHub
+                            Releases</a>.</li>
+                    <li class="pl-2 border-l-2 border-dark-border ml-2 py-1">Extract the folder to your desktop.</li>
+                    <li class="pl-2 border-l-2 border-dark-border ml-2 py-1">Open <code
+                            class="bg-black/30 px-2 py-1 rounded text-brand-300 text-sm">chrome://extensions</code> in
+                        your browser.</li>
+                    <li class="pl-2 border-l-2 border-dark-border ml-2 py-1">Toggle <strong>Developer mode</strong> ON
+                        (top right corner).</li>
+                    <li class="pl-2 border-l-2 border-dark-border ml-2 py-1">Click <strong>Load unpacked</strong> and
+                        select the directory.</li>
+                    <li class="pl-2 border-l-2 border-brand-500 ml-2 py-1 text-white font-medium">Open specific Coursera
+                        assignment page and press "Solve All"!</li>
+                </ol>
+
+                <div class="mt-10 p-4 bg-blue-900/20 border border-blue-500/20 rounded-xl flex gap-4 items-start">
+                    <div class="mt-1"><svg class="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg></div>
+                    <p class="text-sm text-blue-200"><strong>Requirement:</strong> You must have ChatGPT open and logged
+                        in on another tab for the bridging architecture to function.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-dark-border/50 py-12 text-center text-sm text-gray-500">
+        <p>Built for educational and technical research purposes.</p>
+        <p class="mt-2 text-xs opacity-50">Please adhere to your institution's Academic Honor Code when utilizing
+            automated client-side frameworks.</p>
+        <div class="mt-6 flex justify-center gap-6">
+            <a href="https://github.com/aburahatsabir/coursera-quiz-ai-solver"
+                class="hover:text-brand-400 transition-colors">GitHub Repository</a>
+            <a href="#" class="hover:text-brand-400 transition-colors">Report an Issue</a>
+        </div>
+    </footer>
+
+</body>
+
+</html>
