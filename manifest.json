@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Coursera Peer Assignment Solver AI",
-  "version": "6.1.0",
-  "description": "Automated peer assignment solver for Coursera. Supports ChatGPT and Claude AI endpoints across tabs.",
+  "name": "Coursera Quiz AI Solver",
+  "version": "6.1.1",
+  "description": "Automated quiz solver for Coursera with peer assignment support. Supports ChatGPT and Claude AI endpoints across tabs.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -14,7 +14,7 @@
       "16": "icons/icon16.png",
       "48": "icons/icon48.png"
     },
-    "default_title": "Coursera Peer Assignment Solver AI"
+    "default_title": "Coursera Quiz AI Solver"
   },
   "background": {
     "service_worker": "background.js",

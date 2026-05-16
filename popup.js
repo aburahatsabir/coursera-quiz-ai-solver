@@ -1,4 +1,4 @@
-// popup.js — v6.1 Web UI
+// popup.js — v6.1.1 Web UI
 
 const solveAllBtn = document.getElementById('solve-all-btn');
 const autoSolveBtn = document.getElementById('auto-solve-btn');

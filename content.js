@@ -109,7 +109,7 @@
           <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
-        Peer AI
+        Quiz AI
       </div>
     `;
 
