@@ -11,6 +11,14 @@
     const TASK_KEY = 'cqsClaudeTask';
     const ANSWER_KEY = 'cqsClaudeAnswers';
 
+    // Module-level constant — must be here (not inside handleTask) to avoid TDZ errors
+    // when isClaudeRetryMessage() is called before the const line executes.
+    const CLAUDE_RETRY_PHRASES = [
+        /taking longer than usual/i,
+        /trying again shortly/i,
+        /[\u2026].*attempt\s+\d+/i,   // "… attempt 2"
+    ];
+
     // ── Listen for new tasks when the tab is reused ───────────────────────────
     chrome.storage.onChanged.addListener((changes, namespace) => {
         if (namespace === 'local' && changes[TASK_KEY]?.newValue) {
@@ -63,10 +71,21 @@
             return [];
         }
 
-        const baselineCount = getAllResponseEls().length;
-        console.log('[QuizAI Bridge] Baseline response element count:', baselineCount);
+        function normalizeText(t) { return (t || '').replace(/\s+/g, ' ').trim(); }
 
-        // ── 4. Inject the prompt ─────────────────────────────────────────────────────
+        const baselineEls = getAllResponseEls();
+        const baselineCount = baselineEls.length;
+        const baselineLastText = baselineEls.length ? normalizeText(baselineEls[baselineEls.length - 1].innerText) : '';
+        console.log('[QuizAI Bridge] Baseline captured. Count:', baselineCount, 'Last text len:', baselineLastText.length);
+
+        // ── 4. Paste question screenshots (for vision/image questions) ────────────
+        if (Array.isArray(task.screenshots) && task.screenshots.length > 0) {
+            console.log(`[QuizAI Bridge] Pasting ${task.screenshots.length} screenshot(s) for vision questions...`);
+            await pasteImages(inputEl, task.screenshots);
+            await delay(1500); // wait for Claude to process attachments
+        }
+
+        // ── 5. Inject the prompt ─────────────────────────────────────────────────────
         inputEl.focus();
         await delay(300);
         document.execCommand('selectAll', false, null);
@@ -123,7 +142,11 @@
         const newEls = await waitFor(
             () => {
                 const all = getAllResponseEls();
-                return all.length > baselineCount ? all : null;
+                if (!all.length) return null;
+
+                if (baselineCount > 0 && all.length > baselineCount) return all;
+                if (baselineCount === 0 && all.length > 0) return all;
+                return null;
             },
             60000
         );
@@ -133,13 +156,14 @@
             return;
         }
 
-        console.log('[QuizAI Bridge] New response elements appeared:', newEls.length - baselineCount, 'new');
+        console.log('[QuizAI Bridge] New response text detected.');
 
         // ── 7. Wait for the NEW response text to stabilise ───────────────────────────
         const responseText = await waitForStableText(() => {
             const all = getAllResponseEls();
-            // Only read elements that are beyond the baseline
-            return all.slice(baselineCount).map(el => (el.innerText || '').trim()).filter(t => t.length > 5).join('\n');
+            if (!all.length) return '';
+            // Just read the absolute last output block, immune to SPA unmounts
+            return (all[all.length - 1].innerText || '').trim();
         }, 120000);
 
         console.log('[QuizAI Bridge] Stable response (', responseText.length, ' chars):', responseText.slice(0, 150));
@@ -187,6 +211,28 @@
             });
         }
 
+        // Paste base64 screenshots into Claude's input as image attachments
+        async function pasteImages(inputEl, screenshots) {
+            for (const { q, dataUrl } of screenshots) {
+                try {
+                    const res = await fetch(dataUrl);
+                    const blob = await res.blob();
+                    const dt = new DataTransfer();
+                    dt.items.add(new File([blob], `question_${q}.png`, { type: 'image/png' }));
+                    inputEl.focus();
+                    inputEl.dispatchEvent(new ClipboardEvent('paste', {
+                        clipboardData: dt,
+                        bubbles: true,
+                        cancelable: true
+                    }));
+                    console.log(`[QuizAI Bridge] Pasted screenshot for Q${q}`);
+                    await delay(800);
+                } catch (e) {
+                    console.warn(`[QuizAI Bridge] Failed to paste image for Q${q}:`, e);
+                }
+            }
+        }
+
         function waitFor(fn, maxMs) {
             return new Promise(resolve => {
                 const r = fn(); if (r) { resolve(r); return; }
@@ -198,6 +244,13 @@
             });
         }
 
+        // CLAUDE_RETRY_PHRASES is defined at module scope (top of file) to avoid TDZ errors.
+
+        function isClaudeRetryMessage(text) {
+            if (!text) return false;
+            return CLAUDE_RETRY_PHRASES.some(re => re.test(text));
+        }
+
         function waitForStableText(getText, maxMs) {
             return new Promise(resolve => {
                 let last = '', stableCount = 0;
@@ -205,18 +258,37 @@
                 const id = setInterval(() => {
                     const cur = getText();
                     if (cur && cur === last && cur.length > 10) {
-                        stableCount++;
-                        if (stableCount >= 3) { clearInterval(id); resolve(cur); return; } // stable 3×800ms
-                    } else { stableCount = 0; last = cur; }
+                        if (isClaudeRetryMessage(cur)) {
+                            // Claude is retrying — reset and keep waiting
+                            stableCount = 0;
+                            last = ''; // force re-read next tick
+                            console.log('[QuizAI Bridge] Retry phrase detected, still waiting...', cur.slice(0, 80));
+                        } else {
+                            stableCount++;
+                            // Longer text (full answer) needs only 2 stable checks (~1.6s).
+                            // Shorter text needs 3 checks (~2.4s) to avoid locking onto partial streaming.
+                            const needed = cur.length > 300 ? 2 : 3;
+                            if (stableCount >= needed) { clearInterval(id); resolve(cur); return; }
+                        }
+                    } else {
+                        stableCount = 0; last = cur;
+                        if (cur && cur.includes('"answers"')) {
+                            const parsed = parseClaudeResponse(cur, true);
+                            if (parsed && parsed.answers && parsed.answers.length > 0) {
+                                clearInterval(id); resolve(cur); return;
+                            }
+                        }
+                    }
                     if (Date.now() - start > maxMs) { clearInterval(id); resolve(last); }
                 }, 800);
             });
         }
 
-        function parseClaudeResponse(text) {
+        function parseClaudeResponse(text, skipRegexFallback = false) {
             // 1. Extract all complete JSON objects using brace-balancing
             const candidates = extractJsonObjects(text);
-            for (const candidate of candidates.reverse()) { // last one = most recent
+            // Try largest candidate first (most complete JSON blob)
+            for (const candidate of [...candidates].reverse()) {
                 try {
                     const p = JSON.parse(candidate);
                     if (Array.isArray(p.answers) && p.answers.length) {
@@ -226,36 +298,67 @@
                 } catch { /* try next */ }
             }
 
-            // 2. Custom Regex extractor for malformed JSON (handles unescaped quotes)
+            // 2. Sanitize-then-parse: replace unescaped internal quotes with apostrophes
+            for (const candidate of [...candidates].reverse()) {
+                try {
+                    const sanitized = candidate.replace(/:\s*"((?:[^"\\]|\\.)*)"/g, (match, inner) => {
+                        const fixed = inner.replace(/(?<!\\)"/g, "'");
+                        return ': "' + fixed + '"';
+                    });
+                    const p = JSON.parse(sanitized);
+                    if (Array.isArray(p.answers) && p.answers.length) return p.answers;
+                } catch { /* try next */ }
+            }
+
+            if (skipRegexFallback) return { answers: [] };
+
+            // 3. Regex extraction — handles both letter and open-ended text answers, plus scoreIndex for peer review
             const customRes = [];
-            const matches = [...text.matchAll(/"q"\s*:\s*(\d+)\s*,\s*"a"\s*:\s*\[([\s\S]*?)\]\s*\}/g)];
-            if (matches.length > 0) {
-                for (const m of matches) {
+            const qBlocks = [...text.matchAll(/"q"\s*:\s*(\d+)\s*,\s*(?:"text"\s*:\s*"([\s\S]*?)"|"a"\s*:\s*\[([\s\S]*?)\])(?:\s*,\s*"scoreIndex"\s*:\s*(\d+))?/g)];
+            if (qBlocks.length > 0) {
+                for (const m of qBlocks) {
                     const q = parseInt(m[1]);
-                    let rawA = m[2].trim();
-                    // Check if it's just letter choices
+                    const scoreIndexStr = m[4];
+                    let rawA = (m[2] || m[3] || '').trim();
+                    let ansObj = { q };
+
+                    if (scoreIndexStr !== undefined) {
+                        ansObj.scoreIndex = parseInt(scoreIndexStr);
+                    }
+
                     if (/^"[A-H]"(?:\s*,\s*"[A-H]")*$/.test(rawA)) {
-                        const letters = [...rawA.matchAll(/"([A-H])"/g)].map(x => x[1]);
-                        customRes.push({ q, a: letters });
+                        ansObj.a = [...rawA.matchAll(/"([A-H])"/g)].map(x => x[1]);
+                        customRes.push(ansObj);
                     } else {
-                        // Open text answer - sanitize bounding quotes
-                        if (rawA.startsWith('"')) rawA = rawA.substring(1);
-                        if (rawA.endsWith('"')) rawA = rawA.substring(0, rawA.length - 1);
-                        rawA = rawA.replace(/\\"/g, '"').replace(/\\n/g, '\n');
-                        customRes.push({ q, a: [rawA] });
+                        let extracted = rawA;
+                        if (extracted.startsWith('"')) extracted = extracted.substring(1);
+                        if (extracted.endsWith('"')) extracted = extracted.substring(0, extracted.length - 1);
+                        extracted = extracted.replace(/\\"/g, '"').replace(/\\n/g, ' ').trim();
+                        if (extracted.length > 2) {
+                            ansObj.a = [extracted];
+                            customRes.push(ansObj);
+                        }
                     }
                 }
                 if (customRes.length > 0) return customRes;
             }
 
-            // 3. Line-by-line "Q1: A" / "1. B, C" fallback
+            // 4. Block-by-block fallback (Handles conversational multi-line answers)
             const result = [];
-            for (const line of text.split('\n')) {
-                const m = line.match(/(?:Q|Question\s*)?(\d+)[.:)\s]+([A-H](?:\s*[,/&]?\s*(?:and\s*)?[A-H])*)/i);
-                if (m) {
-                    const q = parseInt(m[1]);
-                    const letters = [...m[2].matchAll(/[A-H]/gi)].map(x => x[0].toUpperCase());
-                    if (letters.length) result.push({ q, a: [...new Set(letters)] });
+            const blocks = text.split(/(?:(?:\*\*|^|\n)\s*(?:Q|Question)\s*(\d+)[:.)\s])/i);
+            for (let i = 1; i < blocks.length; i += 2) {
+                const q = parseInt(blocks[i]);
+                const content = blocks[i + 1] || '';
+                const letterMatches = [...content.matchAll(/(?:^|\n)\s*(?:[-*]\s*)?(?:\*\*)?([A-H])(?:\*\*|[.)])\s+/g)];
+                if (letterMatches.length > 0) {
+                    const letters = letterMatches.map(m => m[1].toUpperCase());
+                    result.push({ q, a: [...new Set(letters)] });
+                } else {
+                    let txt = content;
+                    const ansMatch = content.match(/Answer\s*:\s*([\s\S]+?)(?:\n\nExplanation|\n\n$|$)/i);
+                    if (ansMatch) txt = ansMatch[1];
+                    txt = txt.replace(/\*/g, '').trim();
+                    if (txt.length > 2) result.push({ q, a: [txt] });
                 }
             }
             return result;
