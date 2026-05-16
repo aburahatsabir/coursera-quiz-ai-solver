@@ -2,272 +2,435 @@
 
 <p align="center">
   <a href="https://github.com/aburahatsabir/coursera-quiz-ai-solver/releases/latest">
-    <img alt="Latest release" src="https://img.shields.io/github/v/release/aburahatsabir/coursera-quiz-ai-solver?style=for-the-badge">
+    <img alt="Download latest release" src="https://img.shields.io/github/v/release/aburahatsabir/coursera-quiz-ai-solver?style=for-the-badge&label=Download">
   </a>
   <img alt="Chrome extension" src="https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white">
-  <img alt="ChatGPT bridge" src="https://img.shields.io/badge/ChatGPT-Web_UI_Bridge-10A37F?style=for-the-badge&logo=openai&logoColor=white">
-  <img alt="Claude bridge" src="https://img.shields.io/badge/Claude-Web_UI_Bridge-6B46C1?style=for-the-badge">
-  <img alt="No API key required" src="https://img.shields.io/badge/API_Key-Not_Required-111827?style=for-the-badge">
+  <img alt="No API key required" src="https://img.shields.io/badge/No_API_Key-Required-111827?style=for-the-badge">
+  <img alt="ChatGPT and Claude" src="https://img.shields.io/badge/ChatGPT_+_Claude-Supported-10A37F?style=for-the-badge">
 </p>
 
 <p align="center">
-  <strong>An open-source Chrome extension that studies Coursera quiz pages, extracts question context, routes prompts through ChatGPT or Claude web sessions, and returns structured answer suggestions inside the Coursera page.</strong>
+  <strong>A simple Chrome extension that turns ChatGPT or Claude into a Coursera quiz study assistant.</strong>
 </p>
 
 <p align="center">
-  <a href="#quick-start">Quick Start</a> |
-  <a href="#what-it-does">What It Does</a> |
-  <a href="#architecture">Architecture</a> |
-  <a href="#lifecycle">Lifecycle</a> |
-  <a href="#responsible-use">Responsible Use</a> |
-  <a href="#troubleshooting">Troubleshooting</a>
+  Read questions, review answer choices, use AI suggestions, handle visual questions, and support quiz plus peer-assignment workflows without setting up an API key.
+</p>
+
+<p align="center">
+  <a href="https://github.com/aburahatsabir/coursera-quiz-ai-solver/releases/latest"><strong>Download Latest Version</strong></a>
+  |
+  <a href="#install-in-2-minutes"><strong>Install Guide</strong></a>
+  |
+  <a href="#how-it-works"><strong>How It Works</strong></a>
+  |
+  <a href="#faq"><strong>FAQ</strong></a>
 </p>
 
 ---
 
-## Responsible Use
+## The Short Version
 
-This project is documented as a browser automation and AI-assistance research tool. Use it only where automation and AI assistance are allowed: personal practice, self-review, accessibility support, private test courses, internal demos, or workflows where you have explicit permission.
+Coursera Quiz AI Solver is an open-source Chrome extension for learners who want a faster way to study Coursera quizzes with AI. It reads the visible quiz page, prepares a clean prompt, sends it to your open ChatGPT or Claude tab, and brings structured suggestions back into Coursera.
 
-Do not use this extension to misrepresent your own work, submit answers you have not reviewed, violate a course honor code, or distort peer assessment outcomes. Coursera courses and institutions may have strict academic integrity rules. You are responsible for checking those rules before using any automation.
+It is built for:
 
-The README intentionally avoids academic-integrity evasive positioning. That language may attract the wrong audience, reduce trust, and get the repository flagged. The stronger long-term SEO position is transparent, accurate, and responsible: "Coursera quiz AI assistant", "Coursera Chrome extension", "ChatGPT Claude bridge", "no API key learning assistant", and "open-source Coursera automation research".
+| You want to... | The extension helps by... |
+| --- | --- |
+| Study Coursera quiz questions faster | collecting question text and answer options automatically |
+| Use AI without an API key | routing through your existing ChatGPT or Claude web tab |
+| Review image-based questions | attaching supported visual question images to the AI prompt |
+| Work through repeatable practice flows | keeping track of queue progress across page changes |
+| Understand what the tool is doing | showing an on-page status toolbar |
+| Use peer-assignment support | treating peer review as a feature, not a separate product |
+
+> Important: Use this only where AI assistance and automation are allowed. Always review suggestions yourself and follow your course rules.
 
 ---
 
-## What It Does
+## Download
 
-Coursera Quiz AI Solver is a Manifest V3 browser extension for Chromium-based browsers. It injects a small Coursera-side toolbar, detects quiz and assignment page layouts, extracts visible question content, prepares structured prompts, sends those prompts to an active ChatGPT or Claude web tab, parses the model response, and writes answer suggestions back into the page.
-
-The extension also includes peer assignment support. Peer review automation is treated as a feature of the same product, not the product name. The product and release artifact remain:
+The correct release file is:
 
 ```text
-coursera-quiz-ai-solver
 coursera-quiz-ai-solver.zip
-Coursera Quiz AI Solver
 ```
 
-### Core Capabilities
-
-| Area | Capability |
-| --- | --- |
-| Browser platform | Chrome, Edge, Brave, and other Chromium browsers that support Manifest V3 |
-| AI routing | Uses active ChatGPT and Claude web sessions instead of paid API keys |
-| Quiz parsing | Detects multiple-choice, multi-select, numeric, short-answer, free-text, exam, quiz, and assignment-submission layouts |
-| Visual questions | Detects images, canvases, and visual question companions, then attaches captured image data to the AI prompt when possible |
-| State management | Uses `chrome.storage.local` to persist queue state across Coursera single-page-app navigation |
-| Fallback logic | Starts with ChatGPT, falls back to Claude on timeout, parsing failure, or retry/failed-quiz context |
-| Parser design | Uses brace-balanced JSON extraction, sanitized JSON recovery, and text fallback parsing |
-| Page controls | Popup buttons and an injected Coursera toolbar provide single-page and queued workflows |
-| Peer feature | Finds pending peer review rows after submission is detected and can assist with review-form completion |
-| Packaging | Latest release artifact is `coursera-quiz-ai-solver.zip` |
-
----
-
-## Why This Exists
-
-Modern Coursera pages are React-heavy single-page applications. A simple userscript that clicks fixed selectors usually breaks when the DOM changes, when a modal appears, when a question uses a new `data-testid`, or when a model response contains malformed JSON.
-
-This extension explores a more resilient architecture:
-
-1. Detect page type from URL and DOM.
-2. Persist a workflow phase in extension storage.
-3. Collect question blocks with multiple selector passes.
-4. Build a strict JSON prompt for an AI web tab.
-5. Wait for a new model response, not an old chat message.
-6. Parse and sanitize responses with multiple recovery paths.
-7. Apply the result back through native DOM events so React notices the change.
-8. Continue the queue across navigation until the state is cleared.
-
-That makes the repository useful for developers studying Chrome extension architecture, Coursera DOM automation, web UI AI bridges, and resilient parser design.
-
----
-
-## Quick Start
-
-### 1. Download the Latest Release
-
-Download the latest package from:
+Get it here:
 
 ```text
 https://github.com/aburahatsabir/coursera-quiz-ai-solver/releases/latest
 ```
 
-The release asset should be named:
+Avoid older peer-branded package names. Peer assignment support is only a feature inside Coursera Quiz AI Solver, and the current release asset is `coursera-quiz-ai-solver.zip`.
+
+---
+
+## Install in 2 Minutes
+
+### Step 1: Download
+
+Open the latest release page and download:
 
 ```text
 coursera-quiz-ai-solver.zip
 ```
 
-Extract the zip to a normal folder before loading it into Chrome.
+Extract the zip file to a normal folder.
 
-### 2. Load the Extension
+### Step 2: Open Chrome Extensions
 
-1. Open `chrome://extensions/`.
-2. Enable `Developer mode`.
-3. Click `Load unpacked`.
-4. Select the extracted `coursera-quiz-ai-solver` folder.
-5. Pin the extension from the browser extensions menu.
+In Chrome, Edge, Brave, or another Chromium browser, open:
 
-### 3. Prepare AI Web Tabs
+```text
+chrome://extensions/
+```
 
-Open and sign in to at least one supported AI web app:
+### Step 3: Turn On Developer Mode
+
+Use the `Developer mode` switch in the top-right corner.
+
+### Step 4: Load the Extension
+
+Click `Load unpacked`, then select the extracted folder.
+
+### Step 5: Sign In to an AI Tab
+
+Open at least one of these in the same browser profile:
 
 ```text
 https://chatgpt.com/
 https://claude.ai/
 ```
 
-For the most reliable fallback behavior, keep both tabs open in the same browser profile.
-
-### 4. Open Coursera
-
-Open a Coursera course page, assignment page, quiz page, exam page, or peer review page. The injected toolbar appears on supported Coursera routes.
-
-### 5. Review Before Final Use
-
-Treat AI output as suggestions. Review any selected option, text answer, rubric score, and feedback before relying on it in a real course context.
+For best results, keep both tabs signed in and open.
 
 ---
 
-## Installation From Source
+## How to Use
 
-Clone the repository:
+### Use It on One Quiz
 
-```bash
-git clone https://github.com/aburahatsabir/coursera-quiz-ai-solver.git
-cd coursera-quiz-ai-solver
-```
+1. Open a Coursera quiz, exam, or assignment-submission page.
+2. Click the extension icon.
+3. Click the current-page solve action.
+4. Wait while the extension reads the questions and sends them to ChatGPT or Claude.
+5. Review the returned suggestions before relying on them.
 
-Load the repository folder as an unpacked extension:
+### Use It From the Assignments Page
+
+1. Open your Coursera course.
+2. Go to the assignments or grades page.
+3. Use the floating `Quiz AI` toolbar.
+4. Choose quiz or peer-assignment workflow.
+5. Watch the status message so you know what is happening.
+
+### Use It With Visual Questions
+
+If a question includes a chart, image, dataframe screenshot, or canvas, the extension tries to attach the visual context to the AI prompt. This works best when the image can be safely read by the browser.
+
+---
+
+## How It Works
+
+Here is the simple version:
 
 ```text
-chrome://extensions -> Developer mode -> Load unpacked -> select this folder
+Coursera question -> Extension toolbar -> ChatGPT or Claude -> AI suggestion -> Coursera page
 ```
 
-There is no build step. The extension is plain HTML, CSS, JavaScript, and Manifest V3 metadata.
+More clearly:
+
+1. The extension notices that you are on a Coursera quiz or assignment page.
+2. It reads the visible question text and answer choices.
+3. If a question includes an image, it tries to include that image too.
+4. It opens or focuses ChatGPT or Claude.
+5. It asks the AI for a structured answer.
+6. It waits for the AI response.
+7. It parses the answer into a clean format.
+8. It shows or applies the suggestion on the Coursera page.
+
+No OpenAI API key, Anthropic API key, Gemini API key, or backend server is required.
 
 ---
 
-## Repository Structure
+## Best Features
+
+### No API Key Setup
+
+Most AI tools ask you to create API keys, manage billing, or paste secrets into settings. This extension uses your already-open ChatGPT or Claude web session instead.
+
+### ChatGPT and Claude Support
+
+ChatGPT is used as the main AI bridge. Claude can be used as a fallback when the first response fails, times out, or is hard to parse.
+
+### Works With More Than Basic Multiple Choice
+
+The extension is designed for common Coursera formats:
+
+```text
+single-choice questions
+multi-select questions
+short-answer questions
+numeric questions
+free-text questions
+quiz pages
+exam pages
+assignment-submission pages
+peer review pages
+```
+
+### Image and Chart Awareness
+
+For supported visual questions, the extension looks for images, canvas elements, SVGs, and nearby figures. When possible, it attaches visual context to the AI request.
+
+### On-Page Status Toolbar
+
+The floating toolbar tells you what is happening:
+
+```text
+Looking for pending quizzes
+Scanning for image-based questions
+Opening ChatGPT
+Waiting for Claude
+Filling in answers
+Moving to next item
+```
+
+### Peer Assignment Support
+
+Peer assignment support is included as a feature. The extension can detect pending peer review pages and help with repeated review workflows.
+
+Peer feedback affects other learners. Use this only when you are allowed to use automation and you have personally reviewed the submission.
+
+---
+
+## Why People Search for This
+
+People usually find this project when they are looking for:
+
+```text
+Coursera Quiz AI Solver
+Coursera quiz AI assistant
+Coursera Chrome extension
+ChatGPT Coursera extension
+Claude Coursera extension
+Coursera quiz helper no API key
+AI study assistant for Coursera
+open source Coursera extension
+Coursera quiz parser
+Chrome extension for Coursera quizzes
+```
+
+That is exactly what this repository is: a practical, open-source Coursera AI assistant that uses ChatGPT and Claude from the browser.
+
+---
+
+## Feature Overview
+
+| Feature | Included |
+| --- | --- |
+| Chrome extension package | Yes |
+| Works without API keys | Yes |
+| ChatGPT web bridge | Yes |
+| Claude web bridge | Yes |
+| Coursera quiz parsing | Yes |
+| Multiple-choice support | Yes |
+| Multi-select support | Yes |
+| Short-answer support | Yes |
+| Visual question support | Yes, when browser image access allows it |
+| Peer assignment support | Yes, as a feature |
+| Local browser storage workflow | Yes |
+| Backend server required | No |
+| Official Coursera product | No |
+
+---
+
+## Responsible Use
+
+This project is for learning support, accessibility, self-review, private testing, and browser automation research.
+
+Do not use it to misrepresent your own work, submit material you have not reviewed, or violate a course honor code. AI can be wrong. Coursera courses and institutions can have strict rules about outside tools. Check your course policy before using automation.
+
+The safest way to use the extension:
+
+1. Let it collect and organize question context.
+2. Read the AI suggestion.
+3. Compare it with your own understanding.
+4. Review every selected answer or written response.
+5. Submit only work you are allowed to submit.
+
+---
+
+## Privacy in Plain English
+
+This extension does not run its own cloud server.
+
+The data flow is:
+
+```text
+Coursera page -> your browser extension storage -> your ChatGPT or Claude tab -> your browser extension storage -> Coursera page
+```
+
+Important details:
+
+| Question | Answer |
+| --- | --- |
+| Does this project require its own account? | No |
+| Does this project run a backend server? | No |
+| Does it send prompts to ChatGPT or Claude? | Yes, through the AI tab you are signed into |
+| Can visual questions be included in prompts? | Yes, when image capture works |
+| Should I review AI provider privacy settings? | Yes |
+
+---
+
+## Troubleshooting
+
+### The extension does not show up on Coursera
+
+Try this:
+
+1. Open `chrome://extensions/`.
+2. Make sure Coursera Quiz AI Solver is enabled.
+3. Refresh the Coursera tab.
+4. Confirm the page is on `coursera.org`.
+5. Make sure you loaded the extracted folder, not the zip file.
+
+### ChatGPT or Claude did not answer
+
+Check the AI tab. It may need you to:
+
+```text
+sign in again
+finish a verification prompt
+clear a pop-up
+wait for a rate limit
+start a new chat
+```
+
+### The answer format looks wrong
+
+The extension asks for JSON, but AI tools sometimes add extra text. The parser tries several recovery methods, but not every response can be fixed automatically. Retry once, or switch providers.
+
+### An image question was missed
+
+Some images cannot be read by the browser because of cross-origin rules, canvas security rules, or how the course renders the image. If that happens, review the question manually.
+
+### A Coursera button was not clicked
+
+Coursera changes layouts often. Refresh the page and try again. If it keeps happening, open an issue with the page type, extension version, browser version, and a redacted screenshot.
+
+---
+
+## FAQ
+
+### Is this free?
+
+Yes. The repository is open source and the extension does not require a paid API key.
+
+### Do I need an OpenAI or Anthropic API key?
+
+No. It uses the ChatGPT or Claude website in your browser.
+
+### Does it work on Microsoft Edge?
+
+It should work on Chromium-based browsers such as Chrome, Edge, Brave, and similar browsers that support unpacked Manifest V3 extensions.
+
+### Why should I keep both ChatGPT and Claude open?
+
+The extension can use one provider as the main path and the other as a fallback. This improves reliability when one provider is slow, blocked, or returns a response that cannot be parsed.
+
+### Does it support peer assignments?
+
+Yes. Peer assignment support is included, but the product name remains Coursera Quiz AI Solver.
+
+### Is it official?
+
+No. This is an independent open-source project. It is not affiliated with Coursera, OpenAI, Anthropic, Google, Chrome, or any university.
+
+### Why is the zip called `coursera-quiz-ai-solver.zip`?
+
+Because that is the correct product name. Peer assignment support is only one feature inside the extension.
+
+---
+
+## Perfect GitHub Topics
+
+If you maintain this repository, these topics help normal users and search engines understand it:
+
+```text
+coursera
+coursera-quiz
+chrome-extension
+manifest-v3
+chatgpt
+claude-ai
+ai-study-assistant
+learning-tools
+browser-extension
+open-source
+```
+
+---
+
+## For Developers and Maintainers
+
+Most users do not need this section. It is here for contributors, maintainers, and developers who want to understand the internal design.
+
+<details>
+<summary><strong>Project files</strong></summary>
 
 ```text
 .
 |-- manifest.json          # Chrome extension manifest, permissions, content scripts
-|-- background.js          # Service worker: opens ChatGPT/Claude tabs and screenshot capture bridge
-|-- content.js             # Coursera-side state machine, DOM parser, toolbar, quiz/peer workflows
-|-- chatgpt_bridge.js      # ChatGPT-side prompt injection, response detection, JSON parsing
-|-- claude_bridge.js       # Claude-side prompt injection, response detection, JSON parsing
+|-- background.js          # Service worker: opens ChatGPT/Claude tabs and capture bridge
+|-- content.js             # Coursera toolbar, parser, queue state, quiz and peer workflows
+|-- chatgpt_bridge.js      # ChatGPT prompt injection and response parsing
+|-- claude_bridge.js       # Claude prompt injection and response parsing
 |-- popup.html             # Extension popup UI
 |-- popup.css              # Popup styling
 |-- popup.js               # Popup button handlers
 |-- options.html           # Settings page UI
-|-- options.js             # Settings persistence in chrome.storage.sync
+|-- options.js             # Settings persistence
 |-- icons/                 # Extension icons
 |-- docs/index.html        # GitHub Pages landing page
 |-- test_parser_2.js       # Parser smoke test
 ```
 
----
+</details>
 
-## Architecture
-
-```mermaid
-flowchart TD
-  A[Coursera page] --> B[content.js]
-  B --> C[Detect page type]
-  C --> D{Workflow phase}
-  D -->|quiz_single or quiz queue| E[Extract quiz blocks]
-  D -->|peer review| F[Extract peer review form]
-  E --> G[Build structured JSON prompt]
-  E --> H[Capture visual question data]
-  G --> I[chrome.storage.local task]
-  H --> I
-  I --> J[background.js opens AI tab]
-  J --> K{AI provider}
-  K -->|ChatGPT| L[chatgpt_bridge.js]
-  K -->|Claude| M[claude_bridge.js]
-  L --> N[Inject prompt and wait for new response]
-  M --> N
-  N --> O[Parse JSON or fallback text]
-  O --> P[Store answer payload]
-  P --> B
-  B --> Q[Apply suggestions with native DOM events]
-  Q --> R[Advance queue or clear state]
-```
-
-### Main Components
-
-`manifest.json`
-: Defines the extension name, version, icons, permissions, service worker, and three content-script targets: Coursera, ChatGPT, and Claude.
-
-`background.js`
-: Provides a small service-worker bridge. It opens or focuses ChatGPT and Claude tabs and contains a screenshot-capture message handler for image-heavy questions.
-
-`content.js`
-: The core runtime. It detects the current Coursera context, injects the toolbar, persists workflow state, collects quizzes or peer review links, extracts questions, sends tasks to AI tabs, applies parsed suggestions, and advances the queue.
-
-`chatgpt_bridge.js`
-: Runs inside `chatgpt.com`. It listens for `cqsChatGptTask`, pastes screenshots when present, injects the prompt, sends it, waits for a new response element, waits for stable output, parses answers, and stores `cqsChatGptAnswers`.
-
-`claude_bridge.js`
-: Runs inside `claude.ai`. It follows the same bridge pattern as ChatGPT, with Claude-specific selectors for the Tiptap editor and response containers.
-
-`popup.js`
-: Sends `TRIGGER_SOLVE_ALL` and `TRIGGER_START` messages to the active tab. It is the browser-toolbar entry point.
-
-`options.js`
-: Stores preferences in `chrome.storage.sync`. At the moment, most runtime behavior is controlled by the toolbar and content-script state machine; the options page is mostly a persisted configuration surface.
-
----
-
-## Lifecycle
-
-### 1. Browser Loads Content Scripts
-
-When a matching page loads, Chrome injects:
+<details>
+<summary><strong>Internal lifecycle</strong></summary>
 
 ```text
-content.js        -> https://*.coursera.org/*
-chatgpt_bridge.js -> https://chatgpt.com/*
-claude_bridge.js  -> https://claude.ai/*
+1. content.js loads on Coursera.
+2. It detects page type from URL and DOM.
+3. It injects the Quiz AI toolbar.
+4. User starts a single-page or queue workflow.
+5. Workflow state is saved in chrome.storage.local.
+6. Question blocks are detected and sorted.
+7. A strict prompt is created.
+8. Visual data is attached when available.
+9. background.js opens or focuses the AI tab.
+10. chatgpt_bridge.js or claude_bridge.js injects the prompt.
+11. The bridge waits for a new, stable response.
+12. The response is parsed into answer objects.
+13. content.js applies the suggestions with native DOM events.
+14. The queue advances or clears.
 ```
 
-Each script listens only in its own page context.
+</details>
 
-### 2. Coursera Context Detection
+<details>
+<summary><strong>Workflow phases</strong></summary>
 
-`content.js` inspects the URL and DOM to classify the page:
-
-| Context | Detection pattern |
-| --- | --- |
-| Assignment or grades page | `/home/assignments` or `/home/grades` |
-| Quiz/exam page | `/quiz/`, `/exam/`, or `/assignment-submission/` |
-| Peer submit page | `/peer/.../.../submit` |
-| Peer review page | `/peer/.../.../give-feedback` or `/review-next` |
-| Peer overview page | `/peer/.../...` without submit/review suffix |
-
-### 3. Toolbar Injection
-
-The extension injects a floating `Quiz AI` toolbar into Coursera pages. Depending on context, it can show actions such as:
-
-```text
-Solve Quiz
-Auto-Solve Quizzes
-Auto-Solve Peers
-Solve Peer Review
-Stop
-```
-
-### 4. State Machine
-
-The active workflow is stored under:
+State is stored under:
 
 ```text
 cqsAutoState
 ```
 
-Common fields:
+Common state shape:
 
 ```json
 {
@@ -279,295 +442,63 @@ Common fields:
 }
 ```
 
-Recognized phases:
+Main phases:
 
-| Phase | Purpose |
+| Phase | Meaning |
 | --- | --- |
 | `collect` | Scan assignments page for peer review tasks |
-| `collect_quizzes` | Scan assignments page for quiz/exam/assignment-submission links |
-| `quiz` | Process one quiz URL at a time |
-| `peer_review_queue` | Process queued peer reviews |
-| `peer_review` | Process one current peer review page |
+| `collect_quizzes` | Scan assignments page for quiz links |
+| `quiz` | Process quiz URLs one by one |
+| `peer_review_queue` | Process queued peer review pages |
+| `peer_review` | Process the current peer review page |
 
-The phase separation matters. It prevents quiz submission code from running on peer review pages and keeps queue progress stable across page reloads.
+</details>
 
-### 5. Quiz Collection
+<details>
+<summary><strong>AI answer format</strong></summary>
 
-When the quiz collection phase runs, the extension:
-
-1. Waits for assignment links to render.
-2. Scans all anchors for `/quiz/`, `/exam/`, and `/assignment-submission/`.
-3. Finds nearby row containers.
-4. Skips completed rows when a completion indicator is detected.
-5. Marks failed or retry rows for Claude-first handling.
-6. Stores the queue and navigates to the first item.
-
-### 6. Question Extraction
-
-`findBlocks()` uses several passes:
-
-1. Known Coursera `data-testid` question containers.
-2. Numeric, text-input, free-form, and reflective question variants.
-3. Text input fallback for "Enter answer here" fields.
-4. Generic `Question` and `.rc-FormPartsQuestion` selectors.
-5. Last-resort radio/checkbox grouping.
-6. Vertical sort by DOM position.
-
-For each block, the extension extracts:
-
-```text
-question text
-question type: radio, checkbox, text
-answer options when present
-visual companion data when present
-```
-
-### 7. Visual Question Handling
-
-The content script checks for visual content:
-
-```text
-img
-canvas
-large svg
-"shown above" hints
-nearby figure/image siblings
-```
-
-When possible, it converts image content into PNG data URLs and attaches them to the AI task. The bridge scripts paste these images into ChatGPT or Claude before sending the text prompt.
-
-### 8. AI Bridge Task
-
-The Coursera content script writes a task to `chrome.storage.local`:
-
-```text
-cqsChatGptTask
-cqsClaudeTask
-```
-
-The task includes:
-
-```text
-prompt
-taskId
-timestamp
-screenshots
-```
-
-The background service worker opens or focuses the selected AI tab.
-
-### 9. ChatGPT / Claude Response Capture
-
-The bridge script:
-
-1. Waits for the AI editor.
-2. Captures baseline response elements before sending.
-3. Pastes images if provided.
-4. Inserts the prompt using editor-compatible methods.
-5. Clicks Send or falls back to Enter.
-6. Waits for a new response element.
-7. Waits until response text is stable.
-8. Parses the result.
-9. Stores the answer payload back to `chrome.storage.local`.
-
-### 10. Parser Recovery
-
-The parsers expect raw JSON:
+The bridge asks the AI to return JSON like this:
 
 ```json
 {
   "answers": [
     { "q": 1, "a": ["A"] },
     { "q": 2, "a": ["B", "D"] },
-    { "q": 3, "a": ["short text answer"] }
+    { "q": 3, "a": ["short written answer"] }
   ]
 }
 ```
 
-If the model returns extra text or malformed JSON, the parser attempts:
+Parser recovery tries:
 
 1. Brace-balanced JSON extraction.
-2. Sanitized JSON parsing for common quote issues.
-3. Regex extraction of `"q"` and `"a"` blocks.
-4. Conversational fallback parsing by `Q1`, `Question 1`, and answer markers.
+2. Sanitized JSON parsing.
+3. Regex extraction from answer blocks.
+4. Conversational fallback parsing.
 
-### 11. Applying Suggestions
+</details>
 
-For radio and checkbox questions, the extension maps answer letters to input indexes and dispatches mouse/change events so React recognizes the state change.
-
-For text questions, it writes the suggested text into the input or textarea through the native value setter where possible, then dispatches `input` and `change`.
-
-### 12. Queue Advancement
-
-After a page is processed, the extension:
-
-1. Updates `currentIndex`.
-2. Navigates to the next URL in the queue.
-3. Clears state when the queue is done.
-4. Returns to the course assignments page.
-
----
-
-## Peer Assignment Feature
-
-Peer support is a feature inside Coursera Quiz AI Solver. It is not a separate product.
-
-The peer workflow:
-
-1. Scans assignment rows for peer links.
-2. Groups submit and review links by shared `/peer/<id>/<slug>` key.
-3. Confirms that the user's own submission appears complete before queueing peer reviews.
-4. Reads review progress such as `1/4 reviewed`.
-5. Queues only the remaining reviews.
-6. Enters the review form.
-7. Fills feedback fields and selects rubric options.
-8. Tracks completed reviews in storage across navigation.
-
-Responsible-use note: peer feedback affects other learners. Do not use automated review text or rubric choices unless you are permitted to do so and have personally reviewed the submission.
-
----
-
-## Permissions Explained
-
-The extension asks for:
+<details>
+<summary><strong>Permissions explained</strong></summary>
 
 | Permission | Why it is used |
 | --- | --- |
-| `activeTab` | Communicate with the active Coursera tab from the popup |
-| `storage` | Persist workflow queues, AI task payloads, answer payloads, and settings |
-| `scripting` | Support extension-side interaction patterns in Manifest V3 |
-| `tabs` | Find, focus, or create ChatGPT and Claude tabs |
-| `clipboardWrite` | Support web-editor paste flows for prompt and image handling |
+| `activeTab` | Talk to the active Coursera tab from the popup |
+| `storage` | Save queue state, tasks, answers, and settings |
+| `scripting` | Support Manifest V3 extension interaction patterns |
+| `tabs` | Open or focus ChatGPT and Claude |
+| `clipboardWrite` | Support prompt and image paste workflows |
 | `https://*.coursera.org/*` | Run the Coursera content script |
-| `https://chatgpt.com/*` | Run the ChatGPT bridge script |
-| `https://claude.ai/*` | Run the Claude bridge script |
-| `<all_urls>` | Required by the current build for broader screenshot and visual-content workflows |
+| `https://chatgpt.com/*` | Run the ChatGPT bridge |
+| `https://claude.ai/*` | Run the Claude bridge |
+| `<all_urls>` | Used by the current build for broad visual/capture workflows |
 
-No OpenAI, Anthropic, Gemini, or Coursera API key is required by the current web-bridge architecture.
+</details>
 
----
+<details>
+<summary><strong>Development commands</strong></summary>
 
-## Privacy Model
-
-The extension does not run a backend server. It does not include a hosted database. It does not add a paid API gateway.
-
-Data flow is local to your browser profile:
-
-```text
-Coursera page -> chrome.storage.local -> ChatGPT/Claude web tab -> chrome.storage.local -> Coursera page
-```
-
-However, when you send a prompt through ChatGPT or Claude, the question text and any attached screenshots are submitted to that AI provider's web service under your logged-in account. Review the provider's privacy settings and terms before using the extension.
-
----
-
-## SEO Summary
-
-Search-friendly description:
-
-> Coursera Quiz AI Solver is an open-source Chrome extension for Coursera quiz assistance, ChatGPT web UI automation, Claude fallback routing, visual question handling, and no-API-key learning workflows.
-
-Primary keywords:
-
-```text
-Coursera Quiz AI Solver
-Coursera quiz AI assistant
-Coursera Chrome extension
-ChatGPT Coursera extension
-Claude Coursera extension
-Coursera quiz helper no API key
-open source Coursera automation
-AI learning assistant Chrome extension
-Coursera quiz parser
-Chrome extension AI bridge
-```
-
-Long-tail keywords:
-
-```text
-Coursera quiz AI solver Chrome extension
-Coursera quiz assistant using ChatGPT web UI
-Coursera extension with Claude fallback
-no API key Coursera AI assistant
-open source Chrome extension for Coursera quizzes
-Coursera question parser with image support
-Manifest V3 Coursera automation extension
-```
-
-Recommended GitHub topics:
-
-```text
-coursera
-chrome-extension
-manifest-v3
-chatgpt
-claude-ai
-ai-assistant
-learning-tools
-browser-automation
-dom-parser
-open-source
-```
-
----
-
-## Troubleshooting
-
-### The toolbar does not appear on Coursera
-
-Check that:
-
-1. The extension is enabled in `chrome://extensions`.
-2. You loaded the extracted folder, not the zip file.
-3. The page URL matches `https://*.coursera.org/*`.
-4. You refreshed the Coursera tab after loading the extension.
-
-### ChatGPT or Claude does not receive the prompt
-
-Check that:
-
-1. You are signed in to the AI site.
-2. The AI tab is not blocked by a login wall, CAPTCHA, cookie prompt, or modal.
-3. The URL is `https://chatgpt.com/` or `https://claude.ai/`.
-4. The tab is in the same browser profile as the extension.
-
-### The extension waits too long for an answer
-
-Likely causes:
-
-```text
-model rate limit
-AI service outage
-login/session timeout
-CAPTCHA or verification prompt
-DOM selector change in the AI web app
-response did not stabilize before timeout
-```
-
-Switch to the AI tab and check whether manual action is required.
-
-### A question is detected incorrectly
-
-Coursera frequently changes markup. Open an issue with:
-
-```text
-course page type
-question type
-browser name/version
-extension version
-console logs if available
-redacted screenshot of the DOM area
-```
-
-### The settings page mentions options that do not change runtime behavior
-
-The options page persists settings in `chrome.storage.sync`, but the current runtime is mainly controlled by popup messages and the content-script state machine. Treat the settings page as a configuration surface under development.
-
----
-
-## Development Notes
-
-### Run Basic Syntax Checks
+Run syntax checks:
 
 ```bash
 node --check background.js
@@ -577,131 +508,40 @@ node --check claude_bridge.js
 node --check popup.js
 ```
 
-### Run Parser Smoke Test
+Run the parser smoke test:
 
 ```bash
 node test_parser_2.js
 ```
 
-Expected output includes:
-
-```text
-FINAL EXTRACTED: 10
-```
-
-### Package a Release Zip
+Package the extension:
 
 ```bash
 git archive --format=zip --output coursera-quiz-ai-solver.zip HEAD manifest.json background.js content.js chatgpt_bridge.js claude_bridge.js popup.html popup.css popup.js options.html options.js icons
 ```
 
-Verify the packaged manifest:
-
-```bash
-tar -xOf coursera-quiz-ai-solver.zip manifest.json
-```
-
-### Release Checklist
-
-1. Update `manifest.json` version.
-2. Update visible UI version labels.
-3. Run syntax checks.
-4. Run parser smoke test.
-5. Confirm `git diff --check` is clean.
-6. Commit the release.
-7. Create an annotated tag.
-8. Push `main` and the tag.
-9. Create a GitHub Release.
-10. Upload `coursera-quiz-ai-solver.zip`.
-11. Confirm the release is marked latest.
-
----
-
-## Known Limitations
-
-| Limitation | Why it happens |
-| --- | --- |
-| AI web selectors can break | ChatGPT and Claude update their UIs often |
-| Coursera selectors can break | Coursera uses React and A/B-tested DOM structures |
-| Visual capture may fail | Cross-origin images, canvas tainting, or SVG-only diagrams may not serialize |
-| AI output can be wrong | Language models can hallucinate or misunderstand course-specific material |
-| Options page is partially wired | Settings are saved, but not all are consumed by runtime code |
-| `<all_urls>` is broad | Current screenshot/visual workflows use broad host permissions |
-| Peer review automation is sensitive | Peer grading has real learner impact and should be used only with permission |
+</details>
 
 ---
 
 ## Roadmap
 
-High-value improvements:
+Planned improvements that would make the extension better for normal users:
 
-1. Add a review-before-submit mode that never submits automatically.
-2. Wire options-page settings into `content.js`.
-3. Add a visible provider selector: ChatGPT, Claude, or auto fallback.
-4. Add a strict privacy mode that disables screenshots.
-5. Replace broad `<all_urls>` permission with narrower capture behavior if possible.
-6. Add unit tests for `parseRawText`, ChatGPT parsing, and Claude parsing.
-7. Add a small diagnostics panel for selector failures.
-8. Add screenshots and GIFs to the README after redacting real course content.
-9. Add CI checks for syntax, manifest JSON, and packaging.
-10. Add issue templates for DOM breakage reports.
-
----
-
-## FAQ
-
-### Does it require an OpenAI or Anthropic API key?
-
-No. The current architecture uses your logged-in ChatGPT or Claude web tab.
-
-### Does it store data on a server?
-
-No project-owned server is used. The extension stores workflow state in Chrome extension storage. AI prompts are sent to the AI provider web app you are logged into.
-
-### Can it handle image-based questions?
-
-It attempts to detect and attach image data for visual questions. This depends on how the image is rendered and whether the browser can safely serialize it.
-
-### Why does it use both ChatGPT and Claude?
-
-ChatGPT is the default bridge. Claude is used as a fallback and can also be selected when retry/failed context is detected.
-
-### Why is the release zip named `coursera-quiz-ai-solver.zip`?
-
-Because the project name is Coursera Quiz AI Solver. Peer assignment support is a feature, not a separate product.
-
-### Is this an official Coursera product?
-
-No. This is an independent open-source browser extension and is not affiliated with Coursera, OpenAI, Anthropic, or Google.
-
----
-
-## Contributing
-
-Good contributions are usually one of these:
-
-```text
-selector updates for new Coursera layouts
-parser fixes with test cases
-privacy and permissions reductions
-review-before-submit safety improvements
-documentation fixes
-release packaging improvements
-```
-
-Before opening a pull request:
-
-1. Keep changes focused.
-2. Avoid adding unrelated formatting churn.
-3. Run syntax checks.
-4. Include a short explanation of the page layout or bug you tested.
-5. Do not include real learner data, private course material, or screenshots with names/emails.
+1. Add a review-before-submit mode.
+2. Add a clearer first-run setup screen.
+3. Add screenshots and short demo GIFs.
+4. Add a simple provider selector: ChatGPT, Claude, or auto.
+5. Add a privacy mode that disables visual capture.
+6. Reduce broad permissions where possible.
+7. Improve settings so every option affects runtime behavior.
+8. Add issue templates for broken Coursera layouts.
 
 ---
 
 ## Disclaimer
 
-This repository is provided for educational, accessibility, and browser automation research. It is not affiliated with Coursera, OpenAI, Anthropic, Google, Chrome, or any course provider. AI-generated answers may be incorrect. Always follow your course rules, academic integrity requirements, and local policies.
+Coursera Quiz AI Solver is an independent open-source browser extension. It is not affiliated with Coursera, OpenAI, Anthropic, Google, Chrome, or any course provider. AI suggestions can be incomplete or wrong. Always review output yourself and follow your course rules.
 
 ---
 
